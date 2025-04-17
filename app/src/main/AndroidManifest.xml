@@ -13,9 +13,13 @@
         android:theme="@style/Theme.MediaPlaybackApp"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".player.presentation.PlayerActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:theme="@style/Theme.MediaPlaybackApp"
+            />
+        <activity
+            android:name=".home.presentation.MainActivity"
+            android:exported="true"
             android:theme="@style/Theme.MediaPlaybackApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
