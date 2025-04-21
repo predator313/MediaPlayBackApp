@@ -1,6 +1,9 @@
 package com.example.mediaplaybackapp.home.presentation.components
 
+import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
@@ -20,11 +24,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mediaplaybackapp.R
 import com.example.mediaplaybackapp.home.domain.HomeUiState
+import com.example.mediaplaybackapp.utils.navigateViaIntent
+import timber.log.Timber
 
 @Composable
 fun HomeScreen(
     homeUiState: HomeUiState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPlayIconClicked: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -44,7 +51,9 @@ fun HomeScreen(
             Image(
                 imageVector = ImageVector.vectorResource(R.drawable.play_icon),
                 contentDescription = "Play_pause",
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(40.dp).clickable {
+                  onPlayIconClicked()
+                }
             )
         }
 

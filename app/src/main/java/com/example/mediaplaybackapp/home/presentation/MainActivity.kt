@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mediaplaybackapp.home.presentation.components.HomeScreen
 import com.example.mediaplaybackapp.ui.theme.MediaPlaybackAppTheme
+import com.example.mediaplaybackapp.utils.navigateViaIntent
 
 class MainActivity : ComponentActivity() {
     private val homeViewModel: HomeViewModel by viewModels()
@@ -26,7 +27,15 @@ class MainActivity : ComponentActivity() {
                     val homeUiState by homeViewModel.homeUiStateFlow.collectAsStateWithLifecycle()
                     HomeScreen(
                         homeUiState = homeUiState,
-                        modifier = Modifier.fillMaxSize().padding(innerPadding)
+                        modifier = Modifier.fillMaxSize().padding(innerPadding),
+                        onPlayIconClicked = {
+                            startActivity(
+                                navigateViaIntent(
+                                    context = this@MainActivity,
+                                    streamUrl = homeUiState.streamUrl
+                                )
+                            )
+                        }
                     )
                 }
             }
