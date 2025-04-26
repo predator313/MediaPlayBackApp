@@ -43,4 +43,9 @@ class PlayerActivity : ComponentActivity() {
         super.onStart()
         playerViewModel.startPlayback()
     }
+
+    override fun onStop() {
+        super.onStop()
+        playerViewModel.stopPlayback()
+    }
 }

@@ -35,4 +35,8 @@ class PlayerViewModel @Inject constructor(private val exoPlayer: ExoPlayer): Vie
     fun clearVideoSurface() {
         exoPlayer.setVideoSurface(null)
     }
+
+    fun stopPlayback() {
+        exoPlayer.stop()
+    }
 }
