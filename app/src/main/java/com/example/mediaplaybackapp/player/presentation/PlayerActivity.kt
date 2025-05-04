@@ -5,10 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mediaplaybackapp.player.presentation.components.VideoPlayer
 
 import com.example.mediaplaybackapp.ui.theme.MediaPlaybackAppTheme
@@ -26,13 +30,15 @@ class PlayerActivity : ComponentActivity() {
         Timber.tag("hello").e("stream url $streamUrl")
         playerViewModel.setStreamUrl(streamUrl)
         setContent {
+            val playerUiState by playerViewModel.playerUiStateFlow.collectAsStateWithLifecycle()
             MediaPlaybackAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-
                     VideoPlayer(
-                        modifier = Modifier.padding(innerPadding),
+                        modifier = Modifier.fillMaxSize()
+                            .padding(innerPadding),
                         setSurface = playerViewModel::setVideoSurface,
                         clearSurface = playerViewModel::clearVideoSurface,
+                        playerUiState = playerUiState
                     )
                 }
             }
