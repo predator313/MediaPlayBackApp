@@ -44,6 +44,7 @@ class PlayerActivity : ComponentActivity() {
             }
         }
     }
+    //some dummy comments
 
     override fun onStart() {
         super.onStart()
