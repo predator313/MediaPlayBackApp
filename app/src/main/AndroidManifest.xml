@@ -18,6 +18,7 @@
             android:name=".player.presentation.PlayerActivity"
             android:exported="true"
             android:theme="@style/Theme.MediaPlaybackApp"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             />
         <activity
             android:name=".home.presentation.MainActivity"

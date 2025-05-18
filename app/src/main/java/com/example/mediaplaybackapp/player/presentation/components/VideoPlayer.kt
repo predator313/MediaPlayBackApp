@@ -32,9 +32,13 @@ fun VideoPlayer(
     modifier: Modifier = Modifier,
     setSurface: (Surface) -> Unit,
     clearSurface: () -> Unit,
+    onExpendClick: () -> Unit,
+    onCollapsedClick: () -> Unit,
+    onVideoSurfaceClick: () -> Unit,
 ) {
     Box(
-        modifier = modifier.aspectRatio(playerUiState.videoAspectRation),
+        modifier = modifier.aspectRatio(playerUiState.videoAspectRation)
+            .clickable { onVideoSurfaceClick() },
         contentAlignment = Alignment.Center
     ) {
         AndroidExternalSurface(
@@ -48,24 +52,32 @@ fun VideoPlayer(
                 }
             }
         }
-        VideoOverLay(
-            modifier = Modifier.matchParentSize()
-        )
-
+        if (playerUiState.showPlayerControl) {
+            VideoOverLay(
+                modifier = Modifier.matchParentSize(),
+                onCollapsedClick = onCollapsedClick,
+                onExpendClick = onExpendClick,
+                isInFullScreen = playerUiState.isFullScreen
+            )
+        }
     }
 }
 
 @Composable
 fun VideoOverLay(
+    isInFullScreen: Boolean,
     modifier: Modifier = Modifier,
+    onCollapsedClick: () -> Unit,
+    onExpendClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
     ) {
         PlaybackControl(
             modifier = Modifier.matchParentSize(),
-            onCollapsedClick = {},
-            onExpendClick = {}
+            onCollapsedClick = onCollapsedClick,
+            onExpendClick = onExpendClick,
+            isInFullScreen = isInFullScreen,
         )
     }
 }
@@ -73,7 +85,7 @@ fun VideoOverLay(
 @Composable
 fun PlaybackControl(
     modifier: Modifier = Modifier,
-    isInFullScreen: Boolean = false,
+    isInFullScreen: Boolean,
     onCollapsedClick: () -> Unit,
     onExpendClick: () -> Unit,
 ) {

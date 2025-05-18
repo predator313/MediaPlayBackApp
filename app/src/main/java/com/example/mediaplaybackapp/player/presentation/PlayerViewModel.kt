@@ -64,4 +64,30 @@ class PlayerViewModel @Inject constructor(
     fun stopPlayback() {
         exoPlayer.stop()
     }
+
+    fun enterFullScreen() {
+        _playerUiStateFlow.update {
+            it.copy(
+                isFullScreen = true,
+                showPlayerControl = false
+            )
+        }
+    }
+
+    fun exitFullScreen() {
+        _playerUiStateFlow.update {
+            it.copy(
+                isFullScreen = false,
+                showPlayerControl = false
+            )
+        }
+    }
+
+    fun showPlayerControl() {
+        _playerUiStateFlow.update {
+            if (it.showPlayerControl) {
+                it.copy(showPlayerControl = false)
+            } else it.copy(showPlayerControl = true)
+        }
+    }
 }

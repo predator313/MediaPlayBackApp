@@ -1,5 +1,6 @@
 package com.example.mediaplaybackapp.player.presentation
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,8 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mediaplaybackapp.player.presentation.components.VideoPlayer
 
@@ -31,6 +35,19 @@ class PlayerActivity : ComponentActivity() {
         playerViewModel.setStreamUrl(streamUrl)
         setContent {
             val playerUiState by playerViewModel.playerUiStateFlow.collectAsStateWithLifecycle()
+            val window = this.window
+            val windowInsertController = WindowCompat.getInsetsController(window, window.decorView)
+            LaunchedEffect(
+                key1 = playerUiState.isFullScreen
+            ) {
+                    if (playerUiState.isFullScreen) {
+                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                        windowInsertController.hide(WindowInsetsCompat.Type.systemBars())
+                    } else {
+                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                        windowInsertController.show(WindowInsetsCompat.Type.systemBars())
+                    }
+            }
             MediaPlaybackAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     VideoPlayer(
@@ -38,13 +55,15 @@ class PlayerActivity : ComponentActivity() {
                             .padding(innerPadding),
                         setSurface = playerViewModel::setVideoSurface,
                         clearSurface = playerViewModel::clearVideoSurface,
-                        playerUiState = playerUiState
+                        playerUiState = playerUiState,
+                        onCollapsedClick = playerViewModel::exitFullScreen,
+                        onExpendClick = playerViewModel::enterFullScreen,
+                        onVideoSurfaceClick = playerViewModel::showPlayerControl
                     )
                 }
             }
         }
     }
-    //some dummy comments
 
     override fun onStart() {
         super.onStart()
