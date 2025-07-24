@@ -6,9 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
@@ -17,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.mediaplaybackapp.player.presentation.action.PlayerAction
 import com.example.mediaplaybackapp.player.presentation.components.VideoPlayer
-
 import com.example.mediaplaybackapp.ui.theme.MediaPlaybackAppTheme
 import com.example.mediaplaybackapp.utils.STREAM_URL_KEY
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +30,7 @@ class PlayerActivity : ComponentActivity() {
         enableEdgeToEdge()
         val streamUrl = intent.getStringExtra(STREAM_URL_KEY)?:throw IllegalArgumentException("not valid url")
         Timber.tag("hello").e("stream url $streamUrl")
-        playerViewModel.setStreamUrl(streamUrl)
+        playerViewModel.handlePlayerAction(PlayerAction.Init(streamUrl))
         setContent {
             val playerUiState by playerViewModel.playerUiStateFlow.collectAsStateWithLifecycle()
             val window = this.window
@@ -53,12 +51,11 @@ class PlayerActivity : ComponentActivity() {
                     VideoPlayer(
                         modifier = Modifier.fillMaxSize()
                             .padding(innerPadding),
-                        setSurface = playerViewModel::setVideoSurface,
-                        clearSurface = playerViewModel::clearVideoSurface,
                         playerUiState = playerUiState,
                         onCollapsedClick = playerViewModel::exitFullScreen,
                         onExpendClick = playerViewModel::enterFullScreen,
-                        onVideoSurfaceClick = playerViewModel::showPlayerControl
+                        onVideoSurfaceClick = playerViewModel::showPlayerControl,
+                        onPlayerAction = playerViewModel::handlePlayerAction
                     )
                 }
             }
@@ -67,11 +64,11 @@ class PlayerActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        playerViewModel.startPlayback()
+        playerViewModel.handlePlayerAction(PlayerAction.Start(null))
     }
 
     override fun onStop() {
         super.onStop()
-        playerViewModel.stopPlayback()
+        playerViewModel.handlePlayerAction(PlayerAction.Stop)
     }
 }
