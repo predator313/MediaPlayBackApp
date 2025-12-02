@@ -33,7 +33,6 @@ import com.example.mediaplaybackapp.player.domain.PlayerUiState
 import com.example.mediaplaybackapp.player.presentation.action.PlayerAction
 import com.example.mediaplaybackapp.utils.formatMsToString
 import com.example.mediaplaybackapp.utils.isReady
-import timber.log.Timber
 
 @Composable
 fun VideoPlayer(
@@ -205,8 +204,8 @@ fun PlaybackControl(
                         resId = R.drawable.ic_replay_btn,
                         description = "reload",
                         onClick = {
-                            //todo letter we will fix it
-                            onPlayerAction(PlayerAction.Start(0))
+
+                            onPlayerAction(PlayerAction.Start(playerUiState.timeLineUiModel?.currentPositionInMs))
                         }
                     )
                 }
