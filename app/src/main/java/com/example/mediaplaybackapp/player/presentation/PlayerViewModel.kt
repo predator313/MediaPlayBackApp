@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import androidx.core.net.toUri
 import androidx.media3.common.C
+import com.example.mediaplaybackapp.R
 import com.example.mediaplaybackapp.player.domain.PlaybackState
 import com.example.mediaplaybackapp.player.domain.TimeLineUiModel
 import com.example.mediaplaybackapp.player.presentation.action.PlayerAction
@@ -105,6 +106,14 @@ class PlayerViewModel @Inject constructor(
                 Player.STATE_READY -> {
                     startTrackingPlaybackPosition()
                 } else -> stopTrackingPlaybackPosition()
+            }
+
+            when (playbackState) {
+                Player.STATE_READY -> hidePlaceholderImage()
+                Player.STATE_IDLE,
+                Player.STATE_ENDED -> {
+                    showPlaceholderImage()
+                } else -> {}
             }
 
         }
@@ -224,5 +233,17 @@ class PlayerViewModel @Inject constructor(
             currentPositionInMs = currentPosition,
             bufferedPositionInMs = bufferedPosition
         )
+    }
+
+    private fun showPlaceholderImage() {
+        _playerUiStateFlow.update {
+            it.copy(showPlaceholderImg = R.drawable.home_icon)
+        }
+    }
+
+    private fun hidePlaceholderImage() {
+        _playerUiStateFlow.update {
+            it.copy(showPlaceholderImg = null)
+        }
     }
 }

@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -83,6 +85,14 @@ fun VideoOverLay(
     Box(
         modifier = modifier
     ) {
+        playerUiState.showPlaceholderImg?.let {
+            Image(
+                painter = painterResource(it),
+                contentDescription = "home banner",
+                modifier = Modifier.matchParentSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
         PlaybackControl(
             modifier = Modifier.matchParentSize(),
             onCollapsedClick = onCollapsedClick,
