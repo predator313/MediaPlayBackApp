@@ -466,4 +466,20 @@ class PlayerViewModel @Inject constructor(
             )
         }
     }
+
+    fun openTrackSelector() {
+        _playerUiStateFlow.update {
+            it.copy(
+                isTrackSelectorVisible = true
+            )
+        }
+    }
+
+    fun hideTrackSelector() {
+        _playerUiStateFlow.update {
+            it.copy(
+                isTrackSelectorVisible = false
+            )
+        }
+    }
 }

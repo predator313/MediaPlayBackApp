@@ -55,7 +55,8 @@ class PlayerActivity : ComponentActivity() {
                         onCollapsedClick = playerViewModel::exitFullScreen,
                         onExpendClick = playerViewModel::enterFullScreen,
                         onVideoSurfaceClick = playerViewModel::showPlayerControl,
-                        onPlayerAction = playerViewModel::handlePlayerAction
+                        onPlayerAction = playerViewModel::handlePlayerAction,
+                        onSettingClicked = playerViewModel::openTrackSelector
                     )
                 }
             }

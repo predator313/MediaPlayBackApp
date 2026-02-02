@@ -27,11 +27,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.ui.DefaultTimeBar
 import androidx.media3.ui.TimeBar
 import com.example.mediaplaybackapp.R
 import com.example.mediaplaybackapp.player.domain.PlaybackState
 import com.example.mediaplaybackapp.player.domain.PlayerUiState
+import com.example.mediaplaybackapp.player.presentation.PlayerViewModel
 import com.example.mediaplaybackapp.player.presentation.action.PlayerAction
 import com.example.mediaplaybackapp.utils.formatMsToString
 import com.example.mediaplaybackapp.utils.isReady
@@ -40,9 +42,11 @@ import com.example.mediaplaybackapp.utils.isReady
 fun VideoPlayer(
     playerUiState: PlayerUiState,
     modifier: Modifier = Modifier,
+    viewModel: PlayerViewModel = hiltViewModel(),
     onExpendClick: () -> Unit,
     onCollapsedClick: () -> Unit,
     onVideoSurfaceClick: () -> Unit,
+    onSettingClicked: () -> Unit,
     onPlayerAction: (PlayerAction) -> Unit,
 ) {
     Box(
@@ -68,8 +72,28 @@ fun VideoPlayer(
                 onCollapsedClick = onCollapsedClick,
                 onExpendClick = onExpendClick,
                 playerUiState = playerUiState,
-                onPlayerAction = onPlayerAction
+                onPlayerAction = onPlayerAction,
+                onSettingClicked = onSettingClicked,
             )
+        }
+        if (playerUiState.isTrackSelectorVisible) {
+            playerUiState.trackSelection?.let { trackSelectionUiModel ->
+                TrackSelector(
+                    trackSelectionUiModel = trackSelectionUiModel,
+                    onVideoTrackSelected = {
+                        viewModel.handlePlayerAction(PlayerAction.SetVideoTrack(it))
+                    },
+                    onAudioTrackSelected = {
+                        viewModel.handlePlayerAction(PlayerAction.SetAudioTrack(it))
+                    },
+                    onSubtitleTrackSelected = {
+                        viewModel.handlePlayerAction(PlayerAction.SetSubtitleTrack(it))
+                    },
+                    onDismiss = {
+                        viewModel.hideTrackSelector()
+                    }
+                )
+            }
         }
     }
 }
@@ -80,6 +104,7 @@ fun VideoOverLay(
     modifier: Modifier = Modifier,
     onCollapsedClick: () -> Unit,
     onExpendClick: () -> Unit,
+    onSettingClicked: () -> Unit,
     onPlayerAction: (PlayerAction) -> Unit,
 ) {
     Box(
@@ -99,6 +124,7 @@ fun VideoOverLay(
             onExpendClick = onExpendClick,
             playerUiState = playerUiState,
             onPlayerAction = onPlayerAction,
+            onSettingClicked = onSettingClicked,
         )
     }
 }
@@ -109,6 +135,7 @@ fun PlaybackControl(
     modifier: Modifier = Modifier,
     onCollapsedClick: () -> Unit,
     onExpendClick: () -> Unit,
+    onSettingClicked: () -> Unit,
     onPlayerAction: (PlayerAction) -> Unit,
 ) {
     Box(
@@ -117,8 +144,16 @@ fun PlaybackControl(
             .padding(8.dp)
     ) {
         Row(
-            modifier = Modifier.align(Alignment.TopEnd)
+            modifier = Modifier.align(Alignment.TopEnd),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            PlayBackButton(
+                resId = R.drawable.ic_settings,
+                description = "open track selector",
+                modifier = Modifier,
+                onClick = onSettingClicked
+
+            )
             if (playerUiState.isFullScreen) {
                 PlayBackButton(
                     resId = R.drawable.ic_collapse_btn,
