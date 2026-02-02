@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.exoplayer.ExoPlayer
@@ -254,6 +255,18 @@ class PlayerViewModel @Inject constructor(
             is PlayerAction.Stop -> {
                 exoPlayer.stop()
             }
+
+            is PlayerAction.SetAudioTrack -> {
+                setAudioTracks(action.track)
+            }
+
+            is PlayerAction.SetVideoTrack -> {
+                setVideoTracks(action.track)
+            }
+
+            is PlayerAction.SetSubtitleTrack -> {
+                setSubtitleTracks(action.track)
+            }
         }
     }
 
@@ -351,5 +364,106 @@ class PlayerViewModel @Inject constructor(
             }
         }
         return result
+    }
+
+    private fun setVideoTracks(videoTrack: VideoTrack) {
+        val selectionBuilder = exoPlayer
+            .trackSelectionParameters
+            .buildUpon()
+            .clearOverridesOfType(C.TRACK_TYPE_VIDEO)
+        when (videoTrack) {
+            VideoTrack.AUTO -> {
+                selectedVideoTrack = videoTrack
+            }
+
+            else -> {
+                val exoVideoTracks = videoTrackMap[videoTrack]
+                if (exoVideoTracks != null) {
+                    selectionBuilder.setOverrideForType(
+                        TrackSelectionOverride(
+                            exoVideoTracks.trackGroup,
+                            listOf(exoVideoTracks.trackIndexInGroup)
+                        )
+                    )
+                    selectedVideoTrack = videoTrack
+                }
+            }
+        }
+        exoPlayer.trackSelectionParameters = selectionBuilder.build()
+        _playerUiStateFlow.update {
+            it.copy(
+                trackSelection = it.trackSelection?.copy(
+                    selectedVideoTrack = videoTrack
+                )
+            )
+        }
+    }
+
+    private fun setAudioTracks(audioTrack: AudioTrack) {
+        val isTrackDisabled = audioTrack == AudioTrack.NONE
+        val selectionBuilder = exoPlayer
+            .trackSelectionParameters
+            .buildUpon()
+            .clearOverridesOfType(C.TRACK_TYPE_AUDIO)
+            .setTrackTypeDisabled(C.TRACK_TYPE_AUDIO, isTrackDisabled)
+        when (audioTrack) {
+            AudioTrack.AUTO, AudioTrack.NONE -> {
+                selectedAudioTrack = audioTrack
+            }
+
+            else -> {
+                val exoAudioTracks = audioTrackMap[audioTrack]
+                if (exoAudioTracks != null) {
+                    selectionBuilder.setOverrideForType(
+                        TrackSelectionOverride(
+                            exoAudioTracks.trackGroup,
+                            listOf(exoAudioTracks.trackIndexInGroup)
+                        )
+                    )
+                    selectedAudioTrack = audioTrack
+                }
+            }
+        }
+        exoPlayer.trackSelectionParameters = selectionBuilder.build()
+        _playerUiStateFlow.update {
+            it.copy(
+                trackSelection = it.trackSelection?.copy(
+                    selectedAudioTrack = audioTrack
+                )
+            )
+        }
+    }
+
+    private fun setSubtitleTracks(subtitleTrack: SubtitleTrack) {
+        val selectionBuilder = exoPlayer
+            .trackSelectionParameters
+            .buildUpon()
+            .clearOverridesOfType(C.TRACK_TYPE_TEXT)
+        when (subtitleTrack) {
+            SubtitleTrack.AUTO -> {
+                selectedSubtitleTrack = subtitleTrack
+            }
+
+            else -> {
+                val exoSubtitleTracks = subtitleTrackMap[subtitleTrack]
+                if (exoSubtitleTracks != null) {
+                    selectionBuilder.setOverrideForType(
+                        TrackSelectionOverride(
+                            exoSubtitleTracks.trackGroup,
+                            listOf(exoSubtitleTracks.trackIndexInGroup)
+                        )
+                    )
+                    selectedSubtitleTrack = subtitleTrack
+                }
+            }
+        }
+        exoPlayer.trackSelectionParameters = selectionBuilder.build()
+        _playerUiStateFlow.update {
+            it.copy(
+                trackSelection = it.trackSelection?.copy(
+                    selectedSubtitleTrack = selectedSubtitleTrack
+                )
+            )
+        }
     }
 }
