@@ -1,5 +1,6 @@
 package com.example.mediaplaybackapp.player.domain
 
+import androidx.media3.common.text.Cue
 import com.example.mediaplaybackapp.R
 
 data class PlayerUiState(
@@ -11,6 +12,7 @@ data class PlayerUiState(
     val showPlaceholderImg: Int? = R.drawable.home_icon,
     val trackSelection: TrackSelectionUiModel? = null,
     val isTrackSelectorVisible: Boolean = false,
+    val currentSubtitle: List<Cue> = emptyList(),
 )
 
 data class TimeLineUiModel(

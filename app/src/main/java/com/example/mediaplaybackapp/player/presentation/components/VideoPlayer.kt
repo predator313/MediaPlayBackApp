@@ -1,6 +1,7 @@
 package com.example.mediaplaybackapp.player.presentation.components
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.OptIn
 import androidx.compose.foundation.AndroidExternalSurface
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.DefaultTimeBar
 import androidx.media3.ui.TimeBar
 import com.example.mediaplaybackapp.R
@@ -118,13 +120,19 @@ fun VideoOverLay(
                 contentScale = ContentScale.Crop
             )
         }
-        PlaybackControl(
-            modifier = Modifier.matchParentSize(),
-            onCollapsedClick = onCollapsedClick,
-            onExpendClick = onExpendClick,
-            playerUiState = playerUiState,
-            onPlayerAction = onPlayerAction,
-            onSettingClicked = onSettingClicked,
+        if (playerUiState.showPlayerControl) {
+            PlaybackControl(
+                modifier = Modifier.matchParentSize(),
+                onCollapsedClick = onCollapsedClick,
+                onExpendClick = onExpendClick,
+                playerUiState = playerUiState,
+                onPlayerAction = onPlayerAction,
+                onSettingClicked = onSettingClicked,
+            )
+        }
+        SubtitleView(
+            cues = playerUiState.currentSubtitle,
+            modifier = Modifier.matchParentSize()
         )
     }
 }
@@ -315,6 +323,7 @@ fun PlaybackPosition(
     )
 }
 
+@OptIn(UnstableApi::class)
 @Composable
 fun TimeBar(
     positionInMs: Long,

@@ -8,6 +8,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
+import androidx.media3.common.text.CueGroup
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.mediaplaybackapp.R
 import com.example.mediaplaybackapp.player.data.ExoplayerTrack
@@ -170,6 +171,15 @@ class PlayerViewModel @Inject constructor(
                         selectedSubtitleTrack = selectedSubtitleTrack,
                         subtitleTracks = subtitleTrackMap.keys.toList()
                     )
+                )
+            }
+        }
+
+        override fun onCues(cueGroup: CueGroup) {
+            super.onCues(cueGroup)
+            _playerUiStateFlow.update {
+                it.copy(
+                    currentSubtitle = cueGroup.cues
                 )
             }
         }
