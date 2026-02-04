@@ -1,5 +1,6 @@
 package com.example.mediaplaybackapp.player.presentation
 
+import androidx.annotation.OptIn
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.media3.common.C
@@ -9,6 +10,7 @@ import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.common.text.CueGroup
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.mediaplaybackapp.R
 import com.example.mediaplaybackapp.player.data.ExoplayerTrack
@@ -325,6 +327,7 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
+    @OptIn(UnstableApi::class)
     private fun extractAudioTracks(info: Tracks.Group): Map<AudioTrack, ExoplayerTrack> {
         val result = mutableMapOf<AudioTrack, ExoplayerTrack>()
         for (trackIndex in 0 until info.mediaTrackGroup.length) {
@@ -343,6 +346,7 @@ class PlayerViewModel @Inject constructor(
         return result
     }
 
+    @OptIn(UnstableApi::class)
     private fun extractVideoTracks(info: Tracks.Group): Map<VideoTrack, ExoplayerTrack> {
         val result = mutableMapOf<VideoTrack, ExoplayerTrack>()
         for (trackIndex in 0 until info.mediaTrackGroup.length) {
@@ -358,6 +362,7 @@ class PlayerViewModel @Inject constructor(
         return result
     }
 
+    @OptIn(UnstableApi::class)
     private fun extractSubtitleTracks(info: Tracks.Group): Map<SubtitleTrack, ExoplayerTrack> {
         val result = mutableMapOf<SubtitleTrack, ExoplayerTrack>()
         for (trackIndex in 0 until info.mediaTrackGroup.length) {
